@@ -5,15 +5,22 @@ mod vga_buffer;
 
 use core::panic::PanicInfo;
 
+static OS_NAME: &'static str = "SmallOS";
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    println!("Starting {}", OS_NAME);
+    println!("Here's another line.");
+    println!("Foo");
 
-    vga_buffer::print_something();
+    panic!("at the disco");
 
     loop {}
 }
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("Panic detected: {}", &info);
+    
     loop{}
 }
