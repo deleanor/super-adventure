@@ -9,11 +9,12 @@ static OS_NAME: &'static str = "SmallOS";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    vga_buffer::change_color(
+        vga_buffer::Color::Yellow, vga_buffer::Color::Blue);
+    vga_buffer::clear_screen();    
+    
     println!("Starting {}", OS_NAME);
-    println!("Here's another line.");
-    println!("Foo");
-
-    panic!("at the disco");
+    println!("Another line.");
 
     loop {}
 }

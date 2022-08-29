@@ -105,6 +105,16 @@ impl Writer {
         }
         self.clear_line();
     }
+
+    pub fn clear_screen(&mut self) {
+        let blank = ScreenChar{ ascii_character: b' ', color_code: self.color_code };
+        for row in 0..BUFFER_HEIGHT {
+            for col in 0..BUFFER_WIDTH {
+                self.buffer.chars[row][col].write(blank);
+            }
+        } 
+        self.column_position = 0;
+    }
 }
 
 impl fmt::Write for Writer {
@@ -115,7 +125,7 @@ impl fmt::Write for Writer {
 }
 
 lazy_static! {
-    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+    static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::Cyan, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
@@ -138,4 +148,12 @@ macro_rules! println {
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
+}
+
+pub fn change_color(foreground: Color, background: Color) {
+    WRITER.lock().color_code = ColorCode::new(foreground, background);
+}
+
+pub fn clear_screen() {
+    WRITER.lock().clear_screen();
 }
